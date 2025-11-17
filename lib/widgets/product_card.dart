@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cihuy_united/models/product_entry.dart';
 
-// Inline base URL (removed config.dart)
 const String _baseUrl = 'http://localhost:8000';
 
 class ProductCard extends StatelessWidget {
@@ -9,6 +8,20 @@ class ProductCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const ProductCard({super.key, required this.product, required this.onTap});
+
+  String _buildImageUrl(String thumbnail) {
+    if (thumbnail.isEmpty) return '';
+    // If already a complete URL
+    if (thumbnail.startsWith('http://') || thumbnail.startsWith('https://')) {
+      return thumbnail;
+    }
+    // If relative path (e.g., /media/...)
+    if (thumbnail.startsWith('/')) {
+      return '$_baseUrl$thumbnail';
+    }
+    // Otherwise assume it needs base URL
+    return '$_baseUrl/$thumbnail';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +46,26 @@ class ProductCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                   child: (product.thumbnail.isNotEmpty)
                       ? Image.network(
-                          '$_baseUrl/proxy-image/?url=${Uri.encodeComponent(product.thumbnail)}',
+                          _buildImageUrl(product.thumbnail),
                           height: 150,
                           width: double.infinity,
                           fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              height: 150,
+                              color: Colors.grey[200],
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  value:
+                                      loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              ),
+                            );
+                          },
                           errorBuilder: (context, error, stackTrace) =>
                               Container(
                                 height: 150,
