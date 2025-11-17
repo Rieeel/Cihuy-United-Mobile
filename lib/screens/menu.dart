@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cihuy_united/screens/product_form.dart';
-import 'package:cihuy_united/widgets/drawer.dart';
+import 'package:cihuy_united/screens/product_list.dart';
+import 'package:cihuy_united/screens/login.dart';
+import 'package:cihuy_united/widgets/left_drawer.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+
+// Inline base URL (removed config.dart)
+const String _baseUrl = 'http://localhost:8000';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -18,6 +25,7 @@ class _MenuPageState extends State<MenuPage> {
     ItemHomepage("All Products", Icons.list, Colors.blue),
     ItemHomepage("My Products", Icons.person, Colors.green),
     ItemHomepage("Create Product", Icons.add, Colors.red),
+    ItemHomepage("Logout", Icons.logout, Colors.orange),
   ];
 
   @override
@@ -30,7 +38,7 @@ class _MenuPageState extends State<MenuPage> {
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      drawer: const AppDrawer(),
+      drawer: const LeftDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -127,16 +135,48 @@ class ItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Material(
       color: item.color,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
-        onTap: () {
+        onTap: () async {
           if (item.name == "Create Product") {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ProductFormPage()),
             );
+          } else if (item.name == "My Products") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProductListPage()),
+            );
+          } else if (item.name == "All Products") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProductListPage(all: true),
+              ),
+            );
+          } else if (item.name == "Logout") {
+            final response = await request.logout("$_baseUrl/auth/logout/");
+            String message = response["message"];
+            if (context.mounted) {
+              if (response['status']) {
+                String uname = response["username"];
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("$message See you again, $uname.")),
+                );
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              } else {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(message)));
+              }
+            }
           } else {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()

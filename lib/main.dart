@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'menu.dart';
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:cihuy_united/screens/menu.dart';
+import 'package:cihuy_united/screens/login.dart';
+import 'package:cihuy_united/screens/register.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,14 +15,22 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Cihuy United',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return Provider(
+      create: (_) => CookieRequest(),
+      child: MaterialApp(
+        title: 'Cihuy United',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        // Start at Login page
+        home: const LoginPage(),
+        routes: {
+          '/login': (context) => const LoginPage(),
+          '/register': (context) => const RegisterPage(),
+          '/menu': (context) => const MenuPage(),
+        },
       ),
-      initialRoute: '/',
-      routes: {'/': (context) => const MenuPage()},
     );
   }
 }

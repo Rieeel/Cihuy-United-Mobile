@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:cihuy_united/screens/menu.dart';
 import 'package:cihuy_united/screens/product_form.dart';
+import 'package:cihuy_united/screens/product_list.dart';
 
-class AppDrawer extends StatelessWidget {
-  const AppDrawer({super.key});
+class LeftDrawer extends StatelessWidget {
+  const LeftDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +29,30 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.home),
             title: const Text('Home'),
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/');
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const MenuPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.inventory),
+            title: const Text('My Products'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProductListPage(),
+                ),
+              );
             },
           ),
           ListTile(
             leading: const Icon(Icons.add_shopping_cart),
             title: const Text('Add Product'),
             onTap: () {
-              // Close drawer before navigating
               Navigator.pop(context);
-              // Navigate to product form
               Navigator.push(
                 context,
                 MaterialPageRoute(
