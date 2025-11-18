@@ -17,9 +17,9 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  final String nama = "Muhammad Derriel Ramadhan"; // nama aplikasi
-  final String npm = "2406345186"; // npm
-  final String kelas = "PBP F"; // kelas
+  final String nama = "Muhammad Derriel Ramadhan";
+  final String npm = "2406345186";
+  final String kelas = "PBP F";
 
   final List<ItemHomepage> items = [
     ItemHomepage("All Products", Icons.list, Colors.blue),
@@ -31,12 +31,14 @@ class _MenuPageState extends State<MenuPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF1A252F), // Dark background
       appBar: AppBar(
         title: const Text(
           'Cihuy United',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: const Color(0xFF2C3E50),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       drawer: const LeftDrawer(),
       body: Padding(
@@ -44,45 +46,65 @@ class _MenuPageState extends State<MenuPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Row untuk menampilkan 3 InfoCard secara horizontal.
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                InfoCard(title: 'NPM', content: npm),
-                InfoCard(title: 'Name', content: nama),
-                InfoCard(title: 'Class', content: kelas),
-              ],
-            ),
-
-            const SizedBox(height: 16.0),
-
-            Center(
+            // Welcome text
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20.0),
+              margin: const EdgeInsets.only(bottom: 16.0),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2C3E50),
+                borderRadius: BorderRadius.circular(12.0),
+              ),
               child: Column(
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16.0),
-                    child: Text(
-                      'Selamat datang di Cihuy United',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
-                      ),
+                  const Text(
+                    'Stay updated with the latest football Gear',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w500,
                     ),
+                    textAlign: TextAlign.center,
                   ),
-
-                  // Grid untuk menampilkan ItemCard dalam bentuk grid 3 kolom.
-                  GridView.count(
-                    primary: true,
-                    padding: const EdgeInsets.all(20),
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: 3,
-                    shrinkWrap: true,
-                    children: items.map((ItemHomepage item) {
-                      return ItemCard(item);
-                    }).toList(),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildInfoCard('NPM', npm),
+                      _buildInfoCard('Name', nama),
+                      _buildInfoCard('Class', kelas),
+                    ],
                   ),
                 ],
+              ),
+            ),
+
+            // Products section header
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child: const Text(
+                'Products',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+
+            // Grid untuk menampilkan ItemCard dalam bentuk grid
+            Expanded(
+              child: GridView.count(
+                primary: true,
+                padding: const EdgeInsets.all(8),
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                crossAxisCount: 2,
+                childAspectRatio: 1.1,
+                children: items.map((ItemHomepage item) {
+                  return ItemCard(item);
+                }).toList(),
               ),
             ),
           ],
@@ -90,27 +112,32 @@ class _MenuPageState extends State<MenuPage> {
       ),
     );
   }
-}
 
-// Kelas InfoCard
-class InfoCard extends StatelessWidget {
-  final String title;
-  final String content;
-
-  const InfoCard({super.key, required this.title, required this.content});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 2.0,
+  Widget _buildInfoCard(String title, String content) {
+    return Expanded(
       child: Container(
-        width: MediaQuery.of(context).size.width / 3.5,
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(12.0),
+        margin: const EdgeInsets.symmetric(horizontal: 4.0),
+        decoration: BoxDecoration(
+          color: const Color(0xFF34495E),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
         child: Column(
           children: [
-            Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8.0),
-            Text(content),
+            Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                color: Colors.grey[400],
+              ),
+            ),
+            const SizedBox(height: 6.0),
+            Text(
+              content,
+              style: const TextStyle(color: Colors.white, fontSize: 13),
+              overflow: TextOverflow.ellipsis,
+            ),
           ],
         ),
       ),
@@ -136,10 +163,12 @@ class ItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
-    return Material(
-      color: item.color,
-      borderRadius: BorderRadius.circular(12),
+    return Card(
+      color: const Color(0xFF2C3E50),
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
+        borderRadius: BorderRadius.circular(12),
         onTap: () async {
           if (item.name == "Create Product") {
             Navigator.push(
@@ -188,20 +217,30 @@ class ItemCard extends StatelessWidget {
           }
         },
         child: Container(
-          padding: const EdgeInsets.all(8),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(item.icon, color: Colors.white, size: 30.0),
-                const Padding(padding: EdgeInsets.all(3)),
-                Text(
-                  item.name,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ],
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [item.color.withOpacity(0.8), item.color],
             ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(item.icon, color: Colors.white, size: 36.0),
+              const SizedBox(height: 12),
+              Text(
+                item.name,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -60,10 +60,12 @@ class _ProductListPageState extends State<ProductListPage> {
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     return Scaffold(
+      backgroundColor: const Color(0xFF1A252F), // Dark background like Django
       appBar: AppBar(
         title: Text(widget.all ? 'All Products' : 'My Products'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: const Color(0xFF2C3E50),
         foregroundColor: Colors.white,
+        elevation: 0,
       ),
       drawer: const LeftDrawer(),
       body: FutureBuilder<List<ProductEntry>>(
